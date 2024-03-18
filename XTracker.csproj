@@ -18,11 +18,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="DTOs\" />
-    <Folder Include="Repository\Interfaces\" />
-    <Folder Include="Services\Interfaces\" />
-  </ItemGroup>
-
 </Project>
