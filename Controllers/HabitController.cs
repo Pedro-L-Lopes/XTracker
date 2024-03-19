@@ -5,6 +5,7 @@ using XTracker.Services.Interfaces;
 
 namespace XTracker.Controllers;
 
+[ApiConventionType(typeof(DefaultApiConventions))]
 [Route("/[controller]")]
 [ApiController]
 public class HabitController : ControllerBase
