@@ -7,6 +7,7 @@ using XTracker.Services;
 using HabitTracker.test.Repository;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using XTracker.Midleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,9 +57,13 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-app.UseSwagger();
-app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "XTracker API V1"); });
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "XTracker API V1"); });
+}
 
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
