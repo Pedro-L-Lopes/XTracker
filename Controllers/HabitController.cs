@@ -43,4 +43,37 @@ public class HabitController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
+
+
+    /// <summary>
+    /// Retrieves all habits from the database.
+    /// </summary>
+    /// <remarks>
+    /// This endpoint returns a list of all habits stored in the database.
+    /// </remarks>
+    /// <returns>Returns a status code of 200 (OK) along with the list of habits if the request is successful.
+    /// Example:
+    /// 
+    /// [
+    ///    {
+    ///        "id": 1,
+    ///        "title": "Drink 2L of water",
+    ///        "createdDate": "2022-12-31T00:00:00",
+    ///        "weekDays": [1, 2, 3]
+    ///    }
+    /// ]
+    /// </returns>
+    [HttpGet("allHabits")]
+    public async Task<IActionResult> GetAllHabits()
+    {
+        try
+        {
+            var habits = await _habitService.GetAllHabits();
+            return Ok(habits);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Erro interno do servidor: {ex.Message}");
+        }
+    }
 }

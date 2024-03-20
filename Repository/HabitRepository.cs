@@ -1,4 +1,5 @@
-﻿using XTracker.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using XTracker.Context;
 using XTracker.DTOs;
 using XTracker.Models.Habits;
 using XTracker.Repository.Interfaces;
@@ -13,18 +14,30 @@ public class HabitRepository : IHabitRepository
     {
         _context = context;
         _uof = uof;
-    }       
+    }
 
     public async Task<Habit> Create(Habit habit)
     {
-       _context.Habits.Add(habit);
+        _context.Habits.Add(habit);
         await _uof.Commit();
         return habit;
     }
 
-    public Task<List<HabitDTO>> GetAllHabits()
+    public async Task<List<HabitDTO>> GetAllHabits()
     {
-        throw new NotImplementedException();
+        var habits = await _context.Habits
+             .Select(h => new HabitDTO
+             {
+                 Id = h.Id,
+                 Title = h.Title,
+                 CreatedDate = h.CreatedAt,
+                 WeekDays = _context.HabitWeekDays
+                        .Where(hwd => hwd.HabitId == h.Id)
+                        .Select(hwd => hwd.WeekDay.GetValueOrDefault())
+                        .ToList(),
+             }).ToListAsync();
+
+        return habits;
     }
 
     public Task<List<int?>> GetCompletedHabitsForDay(DateTime date)

@@ -22,14 +22,22 @@ public class HabitService : IHabitService
         {
             Title = habitDTO.Title,
             CreatedAt = DateTime.Now.Date,
-            WeekDays = habitDTO.WeekDays.Select(day => new HabitWeekDay { WeekDay = day}).ToList(),
+            WeekDays = habitDTO.WeekDays.Select(day => new HabitWeekDay { WeekDay = day }).ToList(),
         };
         await _uof.HabitRepository.Create(habitEntity);
     }
 
-    public Task<List<HabitDTO>> GetAllHabits()
+    public async Task<List<HabitDTO>> GetAllHabits()
     {
-        throw new NotImplementedException();
+        var habits = await _uof.HabitRepository.GetAllHabits();
+        var habitDTOs = habits.Select(habit =>
+        {
+            var habitDTO = _mapper.Map<HabitDTO>(habit);
+
+            return habitDTO;
+        }).ToList();
+
+        return habitDTOs;
     }
 
     public Task<(List<HabitDTO> possibleHabits, List<int?> completedHabits)> GetHabitsForDay(string date)
