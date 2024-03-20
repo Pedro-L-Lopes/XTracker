@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using XTracker.DTOs;
 using XTracker.Services.Interfaces;
 
@@ -35,7 +36,7 @@ public class HabitController : ControllerBase
         try
         {
             await _habitService.Create(habitDTO);
-            return Ok("Hábito criado com sucesso");
+            return StatusCode((int)HttpStatusCode.Created, "Hábito criado com sucesso");
         }
         catch (Exception ex)
         {
