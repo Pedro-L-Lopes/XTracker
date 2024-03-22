@@ -37,17 +37,24 @@ public class HabitService : IHabitService
             return habitDTO;
         }).ToList();
 
-        return habitDTOs;
+        return habitDTOs;   
     }
 
-    public Task<(List<HabitDTO> possibleHabits, List<int?> completedHabits)> GetHabitsForDay(string date)
+    public async Task<(List<HabitDTO> possibleHabits, List<int?> completedHabits)> GetHabitsForDay(string date)
     {
-        throw new NotImplementedException();
+        if(!DateTime.TryParse(date, out DateTime parsedDate))
+            throw new ArgumentException("Formato de data inválido");
+
+        var possibleHabits = await _uof.HabitRepository.GetHabitsForDay(parsedDate);
+
+        var completedHabits = await _uof.HabitRepository.GetCompletedHabitsForDay(parsedDate);
+
+        return (_mapper.Map<List<Habit>, List<HabitDTO>>(possibleHabits), completedHabits);
     }
 
-    public Task ToggleHabitForDay(int habitId, DateTime date)
+    public async Task ToggleHabitForDay(int habitId, DateTime date)
     {
-        throw new NotImplementedException();
+        await _uof.HabitRepository.ToggleHabitForDay(habitId, date);
     }
 
     public Task Delete(int id)

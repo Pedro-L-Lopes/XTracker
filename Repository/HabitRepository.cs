@@ -30,7 +30,7 @@ public class HabitRepository : IHabitRepository
              {
                  Id = h.Id,
                  Title = h.Title,
-                 CreatedDate = h.CreatedAt,
+                 CreatedAt = h.CreatedAt,
                  WeekDays = _context.HabitWeekDays
                         .Where(hwd => hwd.HabitId == h.Id)
                         .Select(hwd => hwd.WeekDay.GetValueOrDefault())
@@ -40,19 +40,48 @@ public class HabitRepository : IHabitRepository
         return habits;
     }
 
-    public Task<List<int?>> GetCompletedHabitsForDay(DateTime date)
+    public async Task<List<Habit>> GetHabitsForDay(DateTime date)
     {
-        throw new NotImplementedException();
+        return await _context.Habits
+         .Where(h => h.CreatedAt.Date <= date.Date && h.WeekDays.Any(w => w.WeekDay == (int)date.DayOfWeek))
+         .AsNoTracking()
+         .ToListAsync();
     }
 
-    public Task<List<Habit>> GetHabitsForDay(DateTime date)
+    public async Task<List<int?>> GetCompletedHabitsForDay(DateTime date)
     {
-        throw new NotImplementedException();
+        return await _context.DayHabits
+            .Where(dh => dh.Day.Date == date.Date)
+            .Select(dh => dh.HabitId)
+            .Distinct()
+            .ToListAsync();
     }
 
-    public Task ToggleHabitForDay(int habitId, DateTime date)
+    public async Task ToggleHabitForDay(int habitId, DateTime date)
     {
-        throw new NotImplementedException();
+        var day = await _context.Days.FirstOrDefaultAsync(d => d.Date == date);
+
+        if (day == null)
+        {
+            day = new Day { Date = date };
+            _context.Days.Add(day);
+            await _uof.Commit();
+        }
+
+        var existingDayHabit = await _context.DayHabits
+            .FirstOrDefaultAsync(dh => dh.DayId == day.Id && dh.HabitId == habitId);
+
+        if (existingDayHabit != null)
+        {
+            _context.DayHabits.Remove(existingDayHabit);
+        }
+        else
+        {
+            var newDayHabit = new DayHabit { DayId = day.Id, HabitId = habitId };
+            _context.DayHabits.Add(newDayHabit);
+        }
+
+        await _uof.Commit();
     }
 
     public Task Delete(int id)
