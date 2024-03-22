@@ -112,6 +112,12 @@ public class HabitController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Updates the status of the habit (completed/not completed)
+    /// </summary>
+    /// <param name="id">Id of the habit to be updated</param>
+    /// <param name="date">Day this habit was updated</param>
+    /// <returns>200 ok "Hábito atualizado"</returns>
     [HttpPatch("{id}/toggle")]
     public async Task<IActionResult> ToggleHabitForDay(int id, [FromQuery] string date)
     {
@@ -126,6 +132,25 @@ public class HabitController : ControllerBase
         catch (Exception ex)
         {
             return StatusCode(500, $"Erro interno do servidor: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Delete habit
+    /// </summary>
+    /// <param name="id">Id of the habit to be excluded</param>
+    /// <returns>200 Ok "Hábito excluido com sucesso!" </returns>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            await _habitService.Delete(id);
+            return Ok("Hábito excluido com sucesso!");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
 }

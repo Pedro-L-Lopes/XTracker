@@ -84,8 +84,18 @@ public class HabitRepository : IHabitRepository
         await _uof.Commit();
     }
 
-    public Task Delete(int id)
+    public async Task Delete(int habitId)
     {
-        throw new NotImplementedException();
+        var habit = await _context.Habits.FindAsync(habitId);
+
+        if(habit != null)
+        {
+            _context.Habits.Remove(habit);
+            await _uof.Commit();
+        }
+        else
+        {
+            throw new ArgumentException("Hábito não encontrado");
+        }
     }
 }

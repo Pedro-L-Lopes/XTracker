@@ -57,8 +57,8 @@ public class HabitService : IHabitService
         await _uof.HabitRepository.ToggleHabitForDay(habitId, date);
     }
 
-    public Task Delete(int id)
+    public async Task Delete(int habitId)
     {
-        throw new NotImplementedException();
+        await _uof.HabitRepository.Delete(habitId);
     }
 }
