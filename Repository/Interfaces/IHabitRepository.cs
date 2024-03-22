@@ -8,8 +8,7 @@ public interface IHabitRepository
     Task<List<HabitDTO>> GetAllHabits();
     Task<List<Habit>> GetHabitsForDay(DateTime date);
     Task<List<int?>> GetCompletedHabitsForDay(DateTime date);
+    Task<List<SummaryDTO>> GetSummary();
     Task ToggleHabitForDay(int habitId, DateTime date);
-
-    //Task<List<SummaryDTO>> GetSummary();
     Task Delete(int habitId);
 }

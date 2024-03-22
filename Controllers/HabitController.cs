@@ -113,6 +113,31 @@ public class HabitController : ControllerBase
     }
 
     /// <summary>
+    /// Returns a summary with the days, totals of habits on each day and those that have been completed
+    /// </summary>
+    /// <returns>200 ok. Example:
+    ///  [{
+    ///   "id": 5,
+    ///   "date": "2024-03-21T00:00:00",
+    ///   "completed": 2,
+    ///   "amount": 5
+    ///  }]
+    /// </returns>
+    [HttpGet("summary")]
+    public async Task<IActionResult> GetSummary()
+    {
+        try
+        {
+            var summary = await _habitService.GetSummary();
+            return Ok(summary);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Erro interno do servidor: {ex.Message}");
+        }
+    }
+
+    /// <summary>
     /// Updates the status of the habit (completed/not completed)
     /// </summary>
     /// <param name="id">Id of the habit to be updated</param>

@@ -52,6 +52,11 @@ public class HabitService : IHabitService
         return (_mapper.Map<List<Habit>, List<HabitDTO>>(possibleHabits), completedHabits);
     }
 
+    public async Task<List<SummaryDTO>> GetSummary()
+    {
+        return await _uof.HabitRepository.GetSummary();
+    }
+
     public async Task ToggleHabitForDay(int habitId, DateTime date)
     {
         await _uof.HabitRepository.ToggleHabitForDay(habitId, date);

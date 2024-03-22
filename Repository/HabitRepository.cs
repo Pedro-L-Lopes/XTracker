@@ -57,6 +57,24 @@ public class HabitRepository : IHabitRepository
             .ToListAsync();
     }
 
+    public async Task<List<SummaryDTO>> GetSummary()
+    {
+        var summary = await _context.Days
+            .Select(d => new SummaryDTO
+            {
+                Id = d.Id,
+                Date = d.Date,
+                Completed = d.DayHabits.Count,
+                Amount = _context.HabitWeekDays
+                    .Count(hwd => d.Date.HasValue &&
+                            hwd.WeekDay == (int)d.Date.Value.DayOfWeek &&
+                            hwd.Habit.CreatedAt.Date <= d.Date.Value.Date)
+            })
+            .ToListAsync();
+
+        return summary;
+    }
+
     public async Task ToggleHabitForDay(int habitId, DateTime date)
     {
         var day = await _context.Days.FirstOrDefaultAsync(d => d.Date == date);
