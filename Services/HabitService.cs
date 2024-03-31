@@ -44,7 +44,7 @@ public class HabitService : IHabitService
     {
         if(!DateTime.TryParse(date, out DateTime parsedDate))
             throw new ArgumentException("Formato de data inválido");
-
+        
         var possibleHabits = await _uof.HabitRepository.GetHabitsForDay(parsedDate);
 
         var completedHabits = await _uof.HabitRepository.GetCompletedHabitsForDay(parsedDate);
@@ -57,6 +57,16 @@ public class HabitService : IHabitService
         return await _uof.HabitRepository.GetSummary();
     }
 
+    public async Task<(int available, int completed)> GetHabitMetrics(int habitId)
+    {
+        int available = await _uof.HabitRepository.GetAvailableDaysCount(habitId);
+
+        int completed = await _uof.HabitRepository.GetCompletedCount(habitId);
+
+        return (available, completed);
+
+    }
+
     public async Task ToggleHabitForDay(int habitId, DateTime date)
     {
         await _uof.HabitRepository.ToggleHabitForDay(habitId, date);
@@ -66,4 +76,5 @@ public class HabitService : IHabitService
     {
         await _uof.HabitRepository.Delete(habitId);
     }
+
 }

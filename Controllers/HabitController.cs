@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using XTracker.DTOs;
 using XTracker.Services.Interfaces;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace XTracker.Controllers;
 
@@ -138,6 +139,35 @@ public class HabitController : ControllerBase
     }
 
     /// <summary>
+    /// Returns the number of times the habit was available and how many times it was completed (over the entire period). 
+    /// </summary>
+    /// <returns>200 ok. Example:
+    ///  {
+    ///     "available": 2,
+    ///     "completed": 2
+    /// }
+    /// </returns>
+    [HttpGet("{id}/HabitMetrics")]
+    public async Task<IActionResult> GetHabitMetrics(int id)
+    {
+        try
+        {
+            var (available, completed) = await _habitService.GetHabitMetrics(id);
+
+            return Ok(new { available, completed });
+
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Erro interno do servidor: {ex.Message}");
+        }
+    }
+
+    /// <summary>
     /// Updates the status of the habit (completed/not completed)
     /// </summary>
     /// <param name="id">Id of the habit to be updated</param>
@@ -171,7 +201,7 @@ public class HabitController : ControllerBase
         try
         {
             await _habitService.Delete(id);
-            return Ok("Hábito excluido com sucesso!");
+            return Ok("Hábito excluído com sucesso!");
         }
         catch (Exception ex)
         {

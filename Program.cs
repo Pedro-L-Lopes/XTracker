@@ -21,11 +21,11 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "XTracker",
         Version = "v1",
-        Description = "Rastreador de hábitos",
+        Description = "Habit Tracker",
         TermsOfService = new Uri("https://macoratti.net/terms"),
         Contact = new OpenApiContact
         {
-            Name = "pedro",
+            Name = "XT",
             Email = "",
             Url = new Uri("https://macoratti.net/terms"),
         },
@@ -62,6 +62,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "XTracker API V1"); });
 }
+
+app.UseCors(opt => opt.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.UseMiddleware<ExceptionMiddleware>();
 
