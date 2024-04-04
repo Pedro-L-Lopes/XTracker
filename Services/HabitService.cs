@@ -57,13 +57,11 @@ public class HabitService : IHabitService
         return await _uof.HabitRepository.GetSummary();
     }
 
-    public async Task<(int available, int completed)> GetHabitMetrics(int habitId)
+    public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId)
     {
-        int available = await _uof.HabitRepository.GetAvailableDaysCount(habitId);
+        var (habit, available, completed) = await _uof.HabitRepository.GetHabitMetrics(habitId);
 
-        int completed = await _uof.HabitRepository.GetCompletedCount(habitId);
-
-        return (available, completed);
+        return (habit, available, completed);
 
     }
 
@@ -76,5 +74,4 @@ public class HabitService : IHabitService
     {
         await _uof.HabitRepository.Delete(habitId);
     }
-
 }

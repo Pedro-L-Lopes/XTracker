@@ -10,9 +10,7 @@ public interface IHabitRepository
 
     Task<List<Habit>> GetHabitsForDay(DateTime date);
     Task<List<int?>> GetCompletedHabitsForDay(DateTime date);
-
-    Task<int> GetAvailableDaysCount(int habitId);
-    Task<int> GetCompletedCount(int habitId);
+    public Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId);
 
     Task<List<SummaryDTO>> GetSummary();
 

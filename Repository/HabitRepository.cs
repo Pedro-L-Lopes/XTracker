@@ -3,7 +3,6 @@ using XTracker.Context;
 using XTracker.DTOs;
 using XTracker.Models.Habits;
 using XTracker.Repository.Interfaces;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace XTracker.Repository;
 public class HabitRepository : IHabitRepository
@@ -76,49 +75,35 @@ public class HabitRepository : IHabitRepository
         return summary;
     }
 
-    public async Task<int> GetAvailableDaysCount(int habitId)
+    // Repository
+    public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId)
     {
-
-        DateTime createdAt = await _context.Habits
+        var habit = await _context.Habits
             .Where(h => h.Id == habitId)
-            .Select(h => h.CreatedAt)
+            .Select(h => new
+            {
+                Habit = new HabitDTO
+                {
+                    Id = h.Id,
+                    Title = h.Title,
+                    CreatedAt = h.CreatedAt,
+                    WeekDays = _context.HabitWeekDays
+                        .Where(hwd => hwd.HabitId == h.Id)
+                        .Select(hwd => hwd.WeekDay.GetValueOrDefault())
+                        .ToList()
+                },
+                AvailableDaysCount = _context.HabitWeekDays
+                    .Where(hwd => hwd.HabitId == habitId)
+                    .Count(),
+                CompletedCount = _context.DayHabits
+                    .Where(dh => dh.HabitId == habitId)
+                    .Count()
+            })
             .FirstOrDefaultAsync();
 
-        DateTime currentDate = DateTime.Now.Date;
-
-        TimeSpan difference = currentDate - createdAt + TimeSpan.FromDays(1);
-
-        int totalDays = (int)difference.TotalDays;
-
-        var availableWeekDays = await _context.HabitWeekDays
-            .Where(hwd => hwd.HabitId == habitId)
-            .Select(hwd => hwd.WeekDay)
-            .ToListAsync();
-
-
-        int availableDays = 0;
-
-        for (int i = 0; i < totalDays; i++)
-        {
-            DateTime dayToCheck = createdAt.AddDays(i);
-            if (availableWeekDays.Contains((int)dayToCheck.DayOfWeek))
-            {
-                availableDays++;
-            }
-        }
-
-        return availableDays;
+        return (habit?.Habit, habit?.AvailableDaysCount ?? 0, habit?.CompletedCount ?? 0);
     }
 
-
-    public async Task<int> GetCompletedCount(int habitId)
-    {
-        int completed = await _context.DayHabits
-            .Where(h => h.HabitId == habitId)
-            .CountAsync();
-
-        return completed;
-    }
 
     public async Task ToggleHabitForDay(int habitId, DateTime date)
     {

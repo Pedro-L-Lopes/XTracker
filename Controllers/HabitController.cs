@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using XTracker.DTOs;
 using XTracker.Services.Interfaces;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace XTracker.Controllers;
 
@@ -25,7 +24,6 @@ public class HabitController : ControllerBase
     /// <param name="habitDTO">A JSON object containing the details of the habit. The expected format is: { "title": "Exercise", "weekDays": [1, 2, 3, 4, 5] }.
     /// The "title" field is mandatory and represents the title of the habit. The "weekDays" field is a list of numbers representing the days of the week (1 for Monday, 2 for Tuesday, etc.) on which the habit will be available.</param>
     /// <returns>Returns status code 201 (Created) if the habit is successfully created.</returns>
-
     [HttpPost]
     public async Task<IActionResult> CreateHabit([FromBody] HabitDTO habitDTO)
     {
@@ -152,9 +150,9 @@ public class HabitController : ControllerBase
     {
         try
         {
-            var (available, completed) = await _habitService.GetHabitMetrics(id);
+            var (habit, available, completed) = await _habitService.GetHabitMetrics(id);
 
-            return Ok(new { available, completed });
+            return Ok(new { habit, available, completed });
 
         }
         catch (ArgumentException ex)
