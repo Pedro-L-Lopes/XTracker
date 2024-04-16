@@ -62,7 +62,7 @@ public class HabitController : ControllerBase
     ///    }
     /// ]
     /// </returns>
-    [HttpGet("allHabits")]
+    [HttpGet("allhabits")]
     public async Task<IActionResult> GetAllHabits()
     {
         try
