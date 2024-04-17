@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using XTracker.Models.Habits;
+using XTracker.Models.Users;
 
 namespace XTracker.Context;
-public class AppDbContext : IdentityDbContext
+public class AppDbContext : IdentityDbContext<ApplicationUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -16,6 +18,15 @@ public class AppDbContext : IdentityDbContext
     // FluentApi
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
+        // User Identity
+        modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();
+        modelBuilder.Entity<IdentityUserToken<string>>().HasNoKey();
+
+        modelBuilder.Entity<IdentityUserRole<string>>().HasNoKey();
+        //modelBuilder.Entity<SubjectAssigned>().HasKey(x => new {x.sub});
+
         // Configure HabitWeekDay
         modelBuilder.Entity<HabitWeekDay>()
             .HasKey(hw => hw.Id);
