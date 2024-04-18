@@ -84,8 +84,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // DTOs
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+// Habit service and repository
 builder.Services.AddScoped<IHabitRepository, HabitRepository>();
 builder.Services.AddScoped<IHabitService, HabitService>();
+
+// Token Service and repository
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+// UOF
 builder.Services.AddScoped<IUnityOfWork, UnityOfWork>();
 
 // JWT
