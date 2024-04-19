@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using XTracker.DTOs;
@@ -9,6 +11,7 @@ namespace XTracker.Controllers;
 [ApiConventionType(typeof(DefaultApiConventions))]
 [Route("/[controller]")]
 [ApiController]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class HabitController : ControllerBase
 {
     private readonly IHabitService _habitService;
