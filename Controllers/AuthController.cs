@@ -28,6 +28,55 @@ public class AuthController : ControllerBase
         _configuration = configuration;
     }
 
+    [HttpPost("createRole")]
+    public async Task<IActionResult> CreateRole(string rolename)
+    {
+        var roleExists = await _roleManager.RoleExistsAsync(rolename);
+
+        if (!roleExists)
+        {
+            var roleResult = await _roleManager.CreateAsync(new IdentityRole(rolename));
+
+            if (roleResult.Succeeded)
+            {
+                return StatusCode(StatusCodes.Status200OK,
+                    new ResponseDTO { Status = "Success", Message = $"Role {rolename} adicionada com sucesso" });
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status400BadRequest,
+                    new ResponseDTO { Status = "Error", Message = $"Error ao adicionar a role {rolename}" });
+            }
+        }
+
+        return StatusCode(StatusCodes.Status400BadRequest,
+                    new ResponseDTO { Status = "Error", Message = $"A role já existe" });
+    }
+
+    [HttpPost("addUserToRole")]
+    public async Task<IActionResult> AddUserToRole(string email, string roleName)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user != null)
+        {
+            var result = await _userManager.AddToRoleAsync(user, roleName);
+            if (result.Succeeded)
+            {
+                return StatusCode(StatusCodes.Status200OK,
+                    new ResponseDTO { Status = "Success", Message = $"Usuário {email} adicionado a role {roleName}" });
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status400BadRequest,
+                    new ResponseDTO { Status = "Error", Message = $"Error ao adicionar o usuário {email} a role {roleName}" });
+            }
+        }
+
+        return BadRequest(new { error = "Unable to find user" });
+    }
+
+
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
     {
@@ -104,7 +153,7 @@ public class AuthController : ControllerBase
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken(TokenDTO tokenDTO)
     {
-        if(tokenDTO is null)
+        if (tokenDTO is null)
         {
             return BadRequest("Requisição invalida");
         }
@@ -115,7 +164,7 @@ public class AuthController : ControllerBase
 
         var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken!, _configuration);
 
-        if(principal == null)
+        if (principal == null)
         {
             return BadRequest("Acesso invalido toke/refresh token");
         }
@@ -124,7 +173,7 @@ public class AuthController : ControllerBase
 
         var user = await _userManager.FindByNameAsync(userName!);
 
-        if(user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+        if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
         {
             return BadRequest("Acesso invalido toke/refresh token");
         }
