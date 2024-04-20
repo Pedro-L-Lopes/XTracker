@@ -28,6 +28,7 @@ public class AuthController : ControllerBase
         _configuration = configuration;
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost("createRole")]
     public async Task<IActionResult> CreateRole(string rolename)
     {
@@ -53,6 +54,7 @@ public class AuthController : ControllerBase
                     new ResponseDTO { Status = "Error", Message = $"A role já existe" });
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost("addUserToRole")]
     public async Task<IActionResult> AddUserToRole(string email, string roleName)
     {
@@ -119,6 +121,7 @@ public class AuthController : ControllerBase
             {
                 new Claim(ClaimTypes.Name, user.UserName!),
                 new Claim(ClaimTypes.Email, user.Email!),
+                //new Claim("id", user.UserName!),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
@@ -192,7 +195,7 @@ public class AuthController : ControllerBase
         });
     }
 
-    [Authorize]
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost("revoke/{username}")]
     public async Task<IActionResult> Revoke(string username)
     {

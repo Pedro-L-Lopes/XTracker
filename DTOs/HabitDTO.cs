@@ -6,6 +6,7 @@ namespace XTracker.DTOs;
 public class HabitDTO
 {
     public int Id { get; set; }
+    public string UserId { get; set; }
 
     [Required(ErrorMessage = "Insira o titulo do hábito")]
     public string? Title { get; set; }

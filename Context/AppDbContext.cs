@@ -70,6 +70,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             .Property(h => h.Title)
             .HasMaxLength(255)
             .IsRequired();
+        modelBuilder.Entity<Habit>()
+            .Property(h => h.UserId);
 
         // Seed
         modelBuilder.Entity<Habit>().HasData(
