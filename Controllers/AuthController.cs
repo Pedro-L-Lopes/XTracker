@@ -105,52 +105,97 @@ public class AuthController : ControllerBase
                    new ResponseDTO { Status = "Error", Message = "O registro falhou, por favor tente novamente mais tarde" });
         }
 
-        return Ok(new ResponseDTO { Status = "Success", Message = "Usuário criado com sucesso" });
+        if (!await _roleManager.RoleExistsAsync("User"))
+        {
+            await _roleManager.CreateAsync(new IdentityRole("User"));
+        }
+        await _userManager.AddToRoleAsync(user, "User");
+
+        // Gerar tokens
+        var authClaims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, user.UserName!),
+        new Claim(ClaimTypes.Email, user.Email!),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+    };
+
+        var token = _tokenService.GenerateAccessToken(authClaims, _configuration);
+        var refreshToken = _tokenService.GenerateRefreshToken();
+
+        // Atualizar informações do usuário
+        _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInMinutes"], out int RefreshTokenValidityInMinutes);
+        user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(RefreshTokenValidityInMinutes);
+        user.RefreshToken = refreshToken;
+
+        await _userManager.UpdateAsync(user);
+
+        // Retornar tokens na resposta
+        return Ok(new
+        {
+            user.Id,
+            user.UserName,
+            Token = new JwtSecurityTokenHandler().WriteToken(token),
+            RefreshToken = refreshToken,
+            Expiration = token.ValidTo
+        });
     }
+
+
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
     {
-        var user = await _userManager.FindByNameAsync(loginDTO.Username!);
-
-        if (user is not null && await _userManager.CheckPasswordAsync(user, loginDTO.Password!))
+        if (loginDTO == null || string.IsNullOrEmpty(loginDTO.Username) || string.IsNullOrEmpty(loginDTO.Password))
         {
-            var userRoles = await _userManager.GetRolesAsync(user);
-
-            var authClaims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.UserName!),
-                new Claim(ClaimTypes.Email, user.Email!),
-                //new Claim("id", user.UserName!),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            };
-
-            foreach (var userRole in userRoles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-            }
-
-            var token = _tokenService.GenerateAccessToken(authClaims, _configuration);
-
-            var refreshToken = _tokenService.GenerateRefreshToken();
-
-            _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInMinutes"], out int RefreshTokenValidityInMinutes);
-
-            user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(RefreshTokenValidityInMinutes);
-
-            user.RefreshToken = refreshToken;
-
-            await _userManager.UpdateAsync(user);
-
-            return Ok(new
-            {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                RefreshToken = refreshToken,
-                Expiration = token.ValidTo
-            });
+            return StatusCode(StatusCodes.Status401Unauthorized,
+                  new ResponseDTO { Status = "Error", Message = "Insira o nome de usuário e a senha." });
         }
 
-        return Unauthorized();
+        var user = await _userManager.FindByNameAsync(loginDTO.Username);
+        if (user == null)
+        {
+            return StatusCode(StatusCodes.Status401Unauthorized,
+                 new ResponseDTO { Status = "Error", Message = "Usário invalido." });
+        }
+
+        if (!await _userManager.CheckPasswordAsync(user, loginDTO.Password))
+        {
+            return StatusCode(StatusCodes.Status401Unauthorized,
+                 new ResponseDTO { Status = "Error", Message = "Senha invalida" });
+        }
+
+        var userRoles = await _userManager.GetRolesAsync(user);
+        var authClaims = new List<Claim>
+        {
+        new Claim(ClaimTypes.Name, user.UserName),
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.NameIdentifier, user.Id),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
+
+        foreach (var userRole in userRoles)
+        {
+            authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+        }
+
+        var token = _tokenService.GenerateAccessToken(authClaims, _configuration);
+        var refreshToken = _tokenService.GenerateRefreshToken();
+
+        if (int.TryParse(_configuration["JWT:RefreshTokenValidityInMinutes"], out int refreshTokenValidityInMinutes))
+        {
+            user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(refreshTokenValidityInMinutes);
+        }
+
+        user.RefreshToken = refreshToken;
+        await _userManager.UpdateAsync(user);
+
+        return Ok(new
+        {
+            Token = new JwtSecurityTokenHandler().WriteToken(token),
+            RefreshToken = refreshToken,
+            UserId = user.Id,
+            Expiration = token.ValidTo
+        });
     }
 
     [HttpPost("refresh-token")]

@@ -40,40 +40,44 @@ public class HabitRepository : IHabitRepository
         return habits;
     }
 
-    public async Task<List<Habit>> GetHabitsForDay(DateTime date)
+    public async Task<List<Habit>> GetHabitsForDay(DateTime date, string userId)
     {
         return await _context.Habits
-         .Where(h => h.CreatedAt.Date <= date.Date && h.WeekDays.Any(w => w.WeekDay == (int)date.DayOfWeek))
+         .Where(h => h.CreatedAt.Date <= date.Date && h.WeekDays.Any(w => w.WeekDay == (int)date.DayOfWeek) && h.UserId == userId)
          .AsNoTracking()
          .ToListAsync();
     }
 
-    public async Task<List<int?>> GetCompletedHabitsForDay(DateTime date)
+    public async Task<List<int?>> GetCompletedHabitsForDay(DateTime date, string userId)
     {
         return await _context.DayHabits
             .Where(dh => dh.Day.Date == date.Date)
-            .Select(dh => dh.HabitId)
+            .Join(_context.Habits,
+                dh => dh.HabitId,
+                h => h.Id,
+                (dh, h) => new { dh, h })
+            .Where(dh => dh.h.UserId == userId)
+            .Select(dh => dh.dh.HabitId)
             .Distinct()
             .ToListAsync();
     }
 
-    public async Task<List<SummaryDTO>> GetSummary()
+    public async Task<List<SummaryDTO>> GetSummary(string userId)
     {
         var summary = await _context.Days
+            .Where(d => d.DayHabits.Any(dh => dh.Habit.UserId == userId))
             .Select(d => new SummaryDTO
             {
                 Id = d.Id,
                 Date = d.Date,
-                Completed = d.DayHabits.Count,
-                Amount = _context.HabitWeekDays
-                    .Count(hwd => d.Date.HasValue &&
-                            hwd.WeekDay == (int)d.Date.Value.DayOfWeek &&
-                            hwd.Habit.CreatedAt.Date <= d.Date.Value.Date)
+                Completed = d.DayHabits.Count(dh => dh.Habit.UserId == userId),
+                Amount = d.DayHabits.Count(dh => dh.Habit.UserId == userId) 
             })
             .ToListAsync();
 
         return summary;
     }
+
 
     public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId)
     {

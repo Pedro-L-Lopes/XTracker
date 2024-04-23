@@ -97,11 +97,11 @@ public class HabitController : ControllerBase
     ///}
     /// </returns>
     [HttpGet("day")]
-    public async Task<IActionResult> GetHabitsForDay([FromQuery] string date)
+    public async Task<IActionResult> GetHabitsForDay([FromQuery] string date, string userId)
     {
         try
         {
-            var (possibleHabits, completedHabits) = await _habitService.GetHabitsForDay(date);
+            var (possibleHabits, completedHabits) = await _habitService.GetHabitsForDay(date, userId);
             return Ok(new { possibleHabits, completedHabits });
         }
         catch (ArgumentException ex)
@@ -126,11 +126,11 @@ public class HabitController : ControllerBase
     ///  }]
     /// </returns>
     [HttpGet("summary")]
-    public async Task<IActionResult> GetSummary()
+    public async Task<IActionResult> GetSummary([FromQuery] string userId)
     {
         try
         {
-            var summary = await _habitService.GetSummary();
+            var summary = await _habitService.GetSummary(userId);
             return Ok(summary);
         }
         catch (Exception ex)

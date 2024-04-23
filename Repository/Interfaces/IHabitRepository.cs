@@ -1,4 +1,5 @@
-﻿using XTracker.DTOs;
+﻿using Microsoft.AspNetCore.Mvc;
+using XTracker.DTOs;
 using XTracker.Models.Habits;
 
 namespace XTracker.Repository.Interfaces;
@@ -8,11 +9,11 @@ public interface IHabitRepository
 
     Task<List<HabitDTO>> GetAllHabits();
 
-    Task<List<Habit>> GetHabitsForDay(DateTime date);
-    Task<List<int?>> GetCompletedHabitsForDay(DateTime date);
+    Task<List<Habit>> GetHabitsForDay(DateTime date, string userId);
+    Task<List<int?>> GetCompletedHabitsForDay(DateTime date, string userId);
     public Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId);
 
-    Task<List<SummaryDTO>> GetSummary();
+    Task<List<SummaryDTO>> GetSummary(string userId);
 
     Task ToggleHabitForDay(int habitId, DateTime date);
 

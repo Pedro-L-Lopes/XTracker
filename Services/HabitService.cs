@@ -23,6 +23,7 @@ public class HabitService : IHabitService
             Title = habitDTO.Title,
             CreatedAt = DateTime.Now.Date,
             WeekDays = habitDTO.WeekDays.Select(day => new HabitWeekDay { WeekDay = day }).ToList(),
+            UserId = habitDTO.UserId,
         };
         await _uof.HabitRepository.Create(habitEntity);
     }
@@ -40,21 +41,21 @@ public class HabitService : IHabitService
         return habitDTOs;   
     }
 
-    public async Task<(List<HabitDTO> possibleHabits, List<int?> completedHabits)> GetHabitsForDay(string date)
+    public async Task<(List<HabitDTO> possibleHabits, List<int?> completedHabits)> GetHabitsForDay(string date, string userId)
     {
         if(!DateTime.TryParse(date, out DateTime parsedDate))
             throw new ArgumentException("Formato de data inválido");
         
-        var possibleHabits = await _uof.HabitRepository.GetHabitsForDay(parsedDate);
+        var possibleHabits = await _uof.HabitRepository.GetHabitsForDay(parsedDate, userId);
 
-        var completedHabits = await _uof.HabitRepository.GetCompletedHabitsForDay(parsedDate);
+        var completedHabits = await _uof.HabitRepository.GetCompletedHabitsForDay(parsedDate, userId);
 
         return (_mapper.Map<List<Habit>, List<HabitDTO>>(possibleHabits), completedHabits);
     }
 
-    public async Task<List<SummaryDTO>> GetSummary()
+    public async Task<List<SummaryDTO>> GetSummary(string userId)
     {
-        return await _uof.HabitRepository.GetSummary();
+        return await _uof.HabitRepository.GetSummary(userId);
     }
 
     public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId)

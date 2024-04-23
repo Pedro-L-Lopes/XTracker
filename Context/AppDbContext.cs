@@ -71,31 +71,19 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             .HasMaxLength(255)
             .IsRequired();
         modelBuilder.Entity<Habit>()
-            .Property(h => h.UserId);
+            .Property(h => h.UserId)
+            .IsRequired();
 
-        // Seed
-        modelBuilder.Entity<Habit>().HasData(
-                  new Habit { Id = 1, Title = "Beber 2L água", CreatedAt = new DateTime(2024, 01, 01) },
-                  new Habit { Id = 2, Title = "Exercitar", CreatedAt = new DateTime(2024, 1, 7) },
-                  new Habit { Id = 3, Title = "Ler 30 minutos", CreatedAt = new DateTime(2024, 3, 18) }
-              );
+        modelBuilder.Entity<Habit>()
+       .Property(h => h.UserId)
+       .IsRequired();
 
-        modelBuilder.Entity<HabitWeekDay>().HasData(
-            new HabitWeekDay { Id = 1, HabitId = 1, WeekDay = 0 },
-            new HabitWeekDay { Id = 2, HabitId = 1, WeekDay = 1 },
-            new HabitWeekDay { Id = 3, HabitId = 1, WeekDay = 2 },
-            new HabitWeekDay { Id = 4, HabitId = 1, WeekDay = 3 },
-            new HabitWeekDay { Id = 5, HabitId = 1, WeekDay = 4 },
-            new HabitWeekDay { Id = 6, HabitId = 1, WeekDay = 5 },
-            new HabitWeekDay { Id = 7, HabitId = 1, WeekDay = 6 },
-            new HabitWeekDay { Id = 8, HabitId = 2, WeekDay = 1 },
-            new HabitWeekDay { Id = 9, HabitId = 2, WeekDay = 2 },
-            new HabitWeekDay { Id = 10, HabitId = 2, WeekDay = 3 },
-            new HabitWeekDay { Id = 11, HabitId = 2, WeekDay = 4 },
-            new HabitWeekDay { Id = 12, HabitId = 2, WeekDay = 5 },
-            new HabitWeekDay { Id = 13, HabitId = 3, WeekDay = 1 },
-            new HabitWeekDay { Id = 14, HabitId = 3, WeekDay = 3 },
-            new HabitWeekDay { Id = 15, HabitId = 3, WeekDay = 5 }
-        );
+        modelBuilder.Entity<Habit>()
+            .HasOne<ApplicationUser>()
+            .WithMany()
+            .HasForeignKey(h => h.UserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
     }
 }
