@@ -23,9 +23,10 @@ public class HabitRepository : IHabitRepository
         return habit;
     }
 
-    public async Task<List<HabitDTO>> GetAllHabits()
+    public async Task<List<HabitDTO>> GetAllHabits(string userId)
     {
         var habits = await _context.Habits
+             .Where(h => h.UserId == userId)
              .Select(h => new HabitDTO
              {
                  Id = h.Id,
@@ -71,7 +72,7 @@ public class HabitRepository : IHabitRepository
                 Id = d.Id,
                 Date = d.Date,
                 Completed = d.DayHabits.Count(dh => dh.Habit.UserId == userId),
-                Amount = d.DayHabits.Count(dh => dh.Habit.UserId == userId) 
+                Amount = d.DayHabits.Count(dh => dh.Habit.UserId == userId)
             })
             .ToListAsync();
 

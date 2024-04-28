@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using XTracker.DTOs.UserDTOs;
 using XTracker.Models.Users;
 using XTracker.Services.Interfaces;
@@ -82,6 +83,36 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
     {
+        if (!Regex.IsMatch(registerDTO.Username, @"^[a-zA-Z0-9]+$"))
+        {
+            return BadRequest(new ResponseDTO { Status = "Error", Message = "O nome de usuário deve conter apenas letras e números." });
+        }
+
+        if (registerDTO.Password.Length < 8)
+        {
+            return BadRequest(new ResponseDTO { Status = "Error", Message = "A senha deve ter no mínimo 8 caracteres." });
+        }
+
+        if (!Regex.IsMatch(registerDTO.Password, @"[a-z]"))
+        {
+            return BadRequest(new ResponseDTO { Status = "Error", Message = "A senha deve conter pelo menos uma letra minúscula." });
+        }
+
+        if (!Regex.IsMatch(registerDTO.Password, @"[A-Z]"))
+        {
+            return BadRequest(new ResponseDTO { Status = "Error", Message = "A senha deve conter pelo menos uma letra maiúscula." });
+        }
+
+        if (!Regex.IsMatch(registerDTO.Password, @"\d"))
+        {
+            return BadRequest(new ResponseDTO { Status = "Error", Message = "A senha deve conter pelo menos um número." });
+        }
+
+        if (!Regex.IsMatch(registerDTO.Password, @"[^a-zA-Z0-9]"))
+        {
+            return BadRequest(new ResponseDTO { Status = "Error", Message = "A senha deve conter pelo menos um caractere especial." });
+        }
+
         var userExists = await _userManager.FindByNameAsync(registerDTO.Username!);
 
         if (userExists != null)
@@ -132,8 +163,8 @@ public class AuthController : ControllerBase
         // Retornar tokens na resposta
         return Ok(new
         {
-            user.Id,
-            user.UserName,
+            userId = user.Id,
+            userName = user.UserName,
             Token = new JwtSecurityTokenHandler().WriteToken(token),
             RefreshToken = refreshToken,
             Expiration = token.ValidTo
@@ -155,7 +186,7 @@ public class AuthController : ControllerBase
         if (user == null)
         {
             return StatusCode(StatusCodes.Status401Unauthorized,
-                 new ResponseDTO { Status = "Error", Message = "Usário invalido." });
+                 new ResponseDTO { Status = "Error", Message = "Usuário invalido." });
         }
 
         if (!await _userManager.CheckPasswordAsync(user, loginDTO.Password))
@@ -194,6 +225,7 @@ public class AuthController : ControllerBase
             Token = new JwtSecurityTokenHandler().WriteToken(token),
             RefreshToken = refreshToken,
             UserId = user.Id,
+            UserName = user.UserName,
             Expiration = token.ValidTo
         });
     }

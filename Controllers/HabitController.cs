@@ -66,11 +66,11 @@ public class HabitController : ControllerBase
     /// ]
     /// </returns>
     [HttpGet("allhabits")]
-    public async Task<IActionResult> GetAllHabits()
+    public async Task<IActionResult> GetAllHabits(string userId)
     {
         try
         {
-            var habits = await _habitService.GetAllHabits();
+            var habits = await _habitService.GetAllHabits(userId);
             return Ok(habits);
         }
         catch (Exception ex)

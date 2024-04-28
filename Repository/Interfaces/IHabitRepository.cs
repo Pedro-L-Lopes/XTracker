@@ -7,7 +7,7 @@ public interface IHabitRepository
 {
     Task<Habit> Create(Habit habit);
 
-    Task<List<HabitDTO>> GetAllHabits();
+    Task<List<HabitDTO>> GetAllHabits(string userId);
 
     Task<List<Habit>> GetHabitsForDay(DateTime date, string userId);
     Task<List<int?>> GetCompletedHabitsForDay(DateTime date, string userId);

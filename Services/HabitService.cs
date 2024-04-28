@@ -28,9 +28,9 @@ public class HabitService : IHabitService
         await _uof.HabitRepository.Create(habitEntity);
     }
 
-    public async Task<List<HabitDTO>> GetAllHabits()
+    public async Task<List<HabitDTO>> GetAllHabits(string userId)
     {
-        var habits = await _uof.HabitRepository.GetAllHabits();
+        var habits = await _uof.HabitRepository.GetAllHabits(userId);
         var habitDTOs = habits.Select(habit =>
         {
             var habitDTO = _mapper.Map<HabitDTO>(habit);
