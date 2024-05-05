@@ -1,4 +1,4 @@
-﻿namespace XTracker.DTOs
+﻿namespace XTracker.DTOs.HabitDTOs
 {
     public class SummaryDTO
     {

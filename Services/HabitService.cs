@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using XTracker.DTOs;
+using Microsoft.EntityFrameworkCore;
+using XTracker.DTOs.HabitDTOs;
 using XTracker.Models.Habits;
 using XTracker.Repository.Interfaces;
 using XTracker.Services.Interfaces;
@@ -69,6 +70,16 @@ public class HabitService : IHabitService
     public async Task ToggleHabitForDay(int habitId, DateTime date)
     {
         await _uof.HabitRepository.ToggleHabitForDay(habitId, date);
+    }
+
+    public async Task HabitEdit(int habitId, EditHabitDTO EdithabitDTO)
+    {
+        var habitEntity = new Habit
+        {
+            Title = EdithabitDTO.Title,
+        };
+        
+        await _uof.HabitRepository.EditHabit(habitId, habitEntity);
     }
 
     public async Task Delete(int habitId)

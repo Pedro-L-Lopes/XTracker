@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using XTracker.DTOs.HabitDTOs;
 using XTracker.Models.Habits;
 
 namespace XTracker.DTOs.Mappings;

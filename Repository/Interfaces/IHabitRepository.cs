@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using XTracker.DTOs;
+using XTracker.DTOs.HabitDTOs;
 using XTracker.Models.Habits;
 
 namespace XTracker.Repository.Interfaces;
@@ -16,6 +16,7 @@ public interface IHabitRepository
     Task<List<SummaryDTO>> GetSummary(string userId);
 
     Task ToggleHabitForDay(int habitId, DateTime date);
+    Task EditHabit(int habitId, Habit habit);
 
     Task Delete(int habitId);
 }

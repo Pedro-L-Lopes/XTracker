@@ -1,4 +1,4 @@
-﻿using XTracker.DTOs;
+﻿using XTracker.DTOs.HabitDTOs;
 
 namespace XTracker.Services.Interfaces;
 public interface IHabitService
@@ -9,6 +9,7 @@ public interface IHabitService
     Task<List<SummaryDTO>> GetSummary(string userId);
     Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId);
     Task ToggleHabitForDay(int habitId, DateTime date);
+    Task HabitEdit(int habitId, EditHabitDTO EdithabitDTO);
 
     Task Delete(int habitId);
 }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using XTracker.Context;
-using XTracker.DTOs;
+using XTracker.DTOs.HabitDTOs;
 using XTracker.Models.Habits;
 using XTracker.Repository.Interfaces;
 
@@ -79,7 +79,6 @@ public class HabitRepository : IHabitRepository
         return summary;
     }
 
-
     public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId)
     {
         var habitInfo = await _context.Habits
@@ -152,6 +151,20 @@ public class HabitRepository : IHabitRepository
 
         await _uof.Commit();
     }
+    public async Task EditHabit(int habitId, Habit habit)
+    {
+        var existingHabit = await _context.Habits.FindAsync(habitId);
+
+        if (existingHabit == null)
+        {
+            throw new ArgumentException("Hábito não encontrado");
+        }
+
+        existingHabit.Title = habit.Title;
+
+        await _uof.Commit();
+    }
+
 
     public async Task Delete(int habitId)
     {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using XTracker.DTOs;
+using XTracker.DTOs.HabitDTOs;
 using XTracker.Services.Interfaces;
 
 namespace XTracker.Controllers;
@@ -190,6 +190,25 @@ public class HabitController : ControllerBase
             return StatusCode(500, $"Erro interno do servidor: {ex.Message}");
         }
     }
+
+    [HttpPut("{id}/edit")]
+    public async Task<IActionResult> EditHabit(int id, [FromBody] EditHabitDTO editHabitDTO)
+    {
+        try
+        {
+            await _habitService.HabitEdit(id, editHabitDTO);
+            return Ok("Hábito editado com sucesso.");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "Ocorreu um erro ao editar o hábito.");
+        }
+    }
+
 
     /// <summary>
     /// Delete habit

@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using XTracker.Models.Habits;
 
-namespace XTracker.DTOs;
+namespace XTracker.DTOs.HabitDTOs;
 public class HabitDTO
 {
     public int Id { get; set; }
