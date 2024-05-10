@@ -13,7 +13,7 @@ public interface IHabitRepository
     Task<List<int?>> GetCompletedHabitsForDay(DateTime date, string userId);
     public Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId);
 
-    Task<List<SummaryDTO>> GetSummary(string userId);
+    Task<List<SummaryDTO>> GetSummary(string userId, int year);
 
     Task ToggleHabitForDay(int habitId, DateTime date);
     Task EditHabit(int habitId, Habit habit);

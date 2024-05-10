@@ -126,11 +126,11 @@ public class HabitController : ControllerBase
     ///  }]
     /// </returns>
     [HttpGet("summary")]
-    public async Task<IActionResult> GetSummary([FromQuery] string userId)
+    public async Task<IActionResult> GetSummary([FromQuery] string userId, int year)
     {
         try
         {
-            var summary = await _habitService.GetSummary(userId);
+            var summary = await _habitService.GetSummary(userId, year);
             return Ok(summary);
         }
         catch (Exception ex)
@@ -191,6 +191,12 @@ public class HabitController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Updates the habit title
+    /// </summary>
+    /// <param name="id">Id of the habit to be updated</param>
+    /// <param name="editHabitDTO">Data of habit</param>
+    /// <returns>200 ok "Hábito editado com sucesso"</returns>
     [HttpPut("{id}/edit")]
     public async Task<IActionResult> EditHabit(int id, [FromBody] EditHabitDTO editHabitDTO)
     {

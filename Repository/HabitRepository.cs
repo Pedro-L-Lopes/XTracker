@@ -63,10 +63,10 @@ public class HabitRepository : IHabitRepository
             .ToListAsync();
     }
 
-    public async Task<List<SummaryDTO>> GetSummary(string userId)
+    public async Task<List<SummaryDTO>> GetSummary(string userId, int year)
     {
         var summary = await _context.Days
-            .Where(d => d.DayHabits.Any(dh => dh.Habit.UserId == userId))
+            .Where(d => d.DayHabits.Any(dh => dh.Habit.UserId == userId) && d.Date.Value.Year == year)
             .Select(d => new SummaryDTO
             {
                 Id = d.Id,
@@ -78,6 +78,7 @@ public class HabitRepository : IHabitRepository
 
         return summary;
     }
+
 
     public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId)
     {

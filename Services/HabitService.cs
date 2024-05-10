@@ -54,9 +54,9 @@ public class HabitService : IHabitService
         return (_mapper.Map<List<Habit>, List<HabitDTO>>(possibleHabits), completedHabits);
     }
 
-    public async Task<List<SummaryDTO>> GetSummary(string userId)
+    public async Task<List<SummaryDTO>> GetSummary(string userId, int year)
     {
-        return await _uof.HabitRepository.GetSummary(userId);
+        return await _uof.HabitRepository.GetSummary(userId, year);
     }
 
     public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId)
