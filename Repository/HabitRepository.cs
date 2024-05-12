@@ -32,6 +32,7 @@ public class HabitRepository : IHabitRepository
                  Id = h.Id,
                  Title = h.Title,
                  CreatedAt = h.CreatedAt,
+                 UserId = h.UserId,
                  WeekDays = _context.HabitWeekDays
                         .Where(hwd => hwd.HabitId == h.Id)
                         .Select(hwd => hwd.WeekDay.GetValueOrDefault())
@@ -72,13 +73,16 @@ public class HabitRepository : IHabitRepository
                 Id = d.Id,
                 Date = d.Date,
                 Completed = d.DayHabits.Count(dh => dh.Habit.UserId == userId),
-                Amount = d.DayHabits.Count(dh => dh.Habit.UserId == userId)
+                Amount = _context.HabitWeekDays
+                    .Count(hwd => d.Date.HasValue &&
+                            hwd.WeekDay == (int)d.Date.Value.DayOfWeek &&
+                             hwd.Habit.UserId == userId &&
+                            hwd.Habit.CreatedAt.Date <= d.Date.Value.Date)
             })
             .ToListAsync();
 
         return summary;
     }
-
 
     public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId)
     {

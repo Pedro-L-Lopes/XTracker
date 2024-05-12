@@ -100,7 +100,10 @@ namespace XTracker.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
         {
             // Check if the username contains only letters and numbers
-            
+            if (!Regex.IsMatch(registerDTO.Username, @"^[a-zA-Z0-9]+$"))
+            {
+                return BadRequest(new ResponseDTO { Status = "Error", Message = "Não utilize espaços ou caracteres especiais no nome de usuário" });
+            }
 
             // Check if the password meets complexity criteria
             if (!Regex.IsMatch(registerDTO.Password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$"))
@@ -113,7 +116,7 @@ namespace XTracker.Controllers
             if (userExists != null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                       new ResponseDTO { Status = "Error", Message = "Email já cadastrado, por favor tente com outro email" });
+                       new ResponseDTO { Status = "Error", Message = "Esse nome de usuário já está sendo utilizado, por favor utilize outro" });
             }
 
             ApplicationUser user = new()
