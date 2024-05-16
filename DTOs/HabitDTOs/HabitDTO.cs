@@ -10,7 +10,7 @@ public class HabitDTO
 
     [Required(ErrorMessage = "Insira o titulo do hábito")]
     public string? Title { get; set; }
-    public DateTime? CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     [JsonIgnore]
     public List<DayHabit>? DayHabits { get; set; }

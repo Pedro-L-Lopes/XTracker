@@ -149,11 +149,11 @@ public class HabitController : ControllerBase
     /// }
     /// </returns>
     [HttpGet("{id}/HabitMetrics")]
-    public async Task<IActionResult> GetHabitMetrics(int id)
+    public async Task<IActionResult> GetHabitMetrics(int id, string startDate, string endDate)
     {
         try
         {
-            var (habit, available, completed) = await _habitService.GetHabitMetrics(id);
+            var (habit, available, completed) = await _habitService.GetHabitMetrics(id, startDate, endDate);
 
             return Ok(new { habit, available, completed });
 

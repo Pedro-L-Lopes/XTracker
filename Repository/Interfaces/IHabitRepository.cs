@@ -11,7 +11,7 @@ public interface IHabitRepository
 
     Task<List<Habit>> GetHabitsForDay(DateTime date, string userId);
     Task<List<int?>> GetCompletedHabitsForDay(DateTime date, string userId);
-    public Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId);
+    public Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId, DateTime startDate, DateTime endDate);
 
     Task<List<SummaryDTO>> GetSummary(string userId, int year);
 

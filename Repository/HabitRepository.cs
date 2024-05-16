@@ -84,7 +84,7 @@ public class HabitRepository : IHabitRepository
         return summary;
     }
 
-    public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId)
+    public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId, DateTime startDate, DateTime endDate)
     {
         var habitInfo = await _context.Habits
             .Where(h => h.Id == habitId)
@@ -101,7 +101,7 @@ public class HabitRepository : IHabitRepository
                         .ToList()
                 },
                 CompletedCount = _context.DayHabits
-                    .Where(dh => dh.HabitId == habitId)
+                    .Where(dh => dh.HabitId == habitId && dh.Day.Date >= startDate && dh.Day.Date <= endDate)
                     .Count()
             })
             .FirstOrDefaultAsync();
@@ -111,16 +111,16 @@ public class HabitRepository : IHabitRepository
             return (null, 0, 0);
         }
 
-        DateTime createdAt = (DateTime)habitInfo.Habit.CreatedAt;
-        DateTime currentDate = DateTime.Now.Date;
+        DateTime habitStartDate = startDate > habitInfo.Habit.CreatedAt ? startDate : habitInfo.Habit.CreatedAt;
+        DateTime habitEndDate = endDate < DateTime.Now.Date ? endDate : DateTime.Now.Date;
 
-        int totalDays = (int)(currentDate - createdAt).TotalDays + 1;
+        int totalDays = (int)(habitEndDate - habitStartDate).TotalDays + 1;
 
         int availableDays = 0;
 
         for (int i = 0; i < totalDays; i++)
         {
-            DateTime dayToCheck = createdAt.AddDays(i);
+            DateTime dayToCheck = habitStartDate.AddDays(i);
             if (habitInfo.Habit.WeekDays.Contains((int)dayToCheck.DayOfWeek))
             {
                 availableDays++;
@@ -129,6 +129,7 @@ public class HabitRepository : IHabitRepository
 
         return (habitInfo.Habit, availableDays, habitInfo.CompletedCount);
     }
+
 
     public async Task ToggleHabitForDay(int habitId, DateTime date)
     {

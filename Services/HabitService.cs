@@ -39,14 +39,14 @@ public class HabitService : IHabitService
             return habitDTO;
         }).ToList();
 
-        return habitDTOs;   
+        return habitDTOs;
     }
 
     public async Task<(List<HabitDTO> possibleHabits, List<int?> completedHabits)> GetHabitsForDay(string date, string userId)
     {
-        if(!DateTime.TryParse(date, out DateTime parsedDate))
+        if (!DateTime.TryParse(date, out DateTime parsedDate))
             throw new ArgumentException("Formato de data inválido");
-        
+
         var possibleHabits = await _uof.HabitRepository.GetHabitsForDay(parsedDate, userId);
 
         var completedHabits = await _uof.HabitRepository.GetCompletedHabitsForDay(parsedDate, userId);
@@ -59,13 +59,23 @@ public class HabitService : IHabitService
         return await _uof.HabitRepository.GetSummary(userId, year);
     }
 
-    public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId)
+    public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId, string startDate, string endDate)
     {
-        var (habit, available, completed) = await _uof.HabitRepository.GetHabitMetrics(habitId);
+        if (!DateTime.TryParse(startDate, out DateTime startDateTime))
+        {
+            throw new ArgumentException("Invalid start date format", nameof(startDate));
+        }
+
+        if (!DateTime.TryParse(endDate, out DateTime endDateTime))
+        {
+            throw new ArgumentException("Invalid end date format", nameof(endDate));
+        }
+
+        var (habit, available, completed) = await _uof.HabitRepository.GetHabitMetrics(habitId, startDateTime, endDateTime);
 
         return (habit, available, completed);
-
     }
+
 
     public async Task ToggleHabitForDay(int habitId, DateTime date)
     {
@@ -78,7 +88,7 @@ public class HabitService : IHabitService
         {
             Title = EdithabitDTO.Title,
         };
-        
+
         await _uof.HabitRepository.EditHabit(habitId, habitEntity);
     }
 
