@@ -35,7 +35,7 @@ public class HabitRepository : IHabitRepository
                  UserId = h.UserId,
                  WeekDays = _context.HabitWeekDays
                         .Where(hwd => hwd.HabitId == h.Id)
-                        .Select(hwd => hwd.WeekDay.GetValueOrDefault())
+                        .Select(hwd => hwd.WeekDay)
                         .ToList(),
              }).ToListAsync();
 
@@ -50,7 +50,7 @@ public class HabitRepository : IHabitRepository
          .ToListAsync();
     }
 
-    public async Task<List<int?>> GetCompletedHabitsForDay(DateTime date, string userId)
+    public async Task<List<Guid>> GetCompletedHabitsForDay(DateTime date, string userId)
     {
         return await _context.DayHabits
             .Where(dh => dh.Day.Date == date.Date)
@@ -84,7 +84,7 @@ public class HabitRepository : IHabitRepository
         return summary;
     }
 
-    public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(int habitId, DateTime startDate, DateTime endDate)
+    public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(Guid habitId, DateTime startDate, DateTime endDate)
     {
         var habitInfo = await _context.Habits
             .Where(h => h.Id == habitId)
@@ -97,7 +97,7 @@ public class HabitRepository : IHabitRepository
                     CreatedAt = h.CreatedAt,
                     WeekDays = _context.HabitWeekDays
                         .Where(hwd => hwd.HabitId == h.Id)
-                        .Select(hwd => hwd.WeekDay.GetValueOrDefault())
+                        .Select(hwd => hwd.WeekDay)
                         .ToList()
                 },
                 CompletedCount = _context.DayHabits
@@ -131,7 +131,7 @@ public class HabitRepository : IHabitRepository
     }
 
 
-    public async Task ToggleHabitForDay(int habitId, DateTime date)
+    public async Task ToggleHabitForDay(Guid habitId, DateTime date)
     {
         var day = await _context.Days.FirstOrDefaultAsync(d => d.Date == date);
 
@@ -157,7 +157,7 @@ public class HabitRepository : IHabitRepository
 
         await _uof.Commit();
     }
-    public async Task EditHabit(int habitId, Habit habit)
+    public async Task EditHabit(Guid habitId, Habit habit)
     {
         var existingHabit = await _context.Habits.FindAsync(habitId);
 
@@ -172,7 +172,7 @@ public class HabitRepository : IHabitRepository
     }
 
 
-    public async Task Delete(int habitId)
+    public async Task Delete(Guid habitId)
     {
         var habit = await _context.Habits.FindAsync(habitId);
 

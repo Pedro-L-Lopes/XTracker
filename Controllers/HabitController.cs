@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Net;
 using XTracker.DTOs.HabitDTOs;
 using XTracker.Services.Interfaces;
@@ -149,7 +150,7 @@ public class HabitController : ControllerBase
     /// }
     /// </returns>
     [HttpGet("{id}/HabitMetrics")]
-    public async Task<IActionResult> GetHabitMetrics(int id, string startDate, string endDate)
+    public async Task<IActionResult> GetHabitMetrics(Guid id, string startDate, string endDate)
     {
         try
         {
@@ -175,7 +176,7 @@ public class HabitController : ControllerBase
     /// <param name="date">Day this habit was updated</param>
     /// <returns>200 ok "Hábito atualizado"</returns>
     [HttpPatch("{id}/toggle")]
-    public async Task<IActionResult> ToggleHabitForDay(int id, [FromQuery] string date)
+    public async Task<IActionResult> ToggleHabitForDay(Guid id, [FromQuery] string date)
     {
         if (!DateTime.TryParse(date, out DateTime parsedDate))
             return BadRequest("Formato de data inválido");
@@ -198,7 +199,7 @@ public class HabitController : ControllerBase
     /// <param name="editHabitDTO">Data of habit</param>
     /// <returns>200 ok "Hábito editado com sucesso"</returns>
     [HttpPut("{id}/edit")]
-    public async Task<IActionResult> EditHabit(int id, [FromBody] EditHabitDTO editHabitDTO)
+    public async Task<IActionResult> EditHabit(Guid id, [FromBody] EditHabitDTO editHabitDTO)
     {
         try
         {
@@ -222,7 +223,7 @@ public class HabitController : ControllerBase
     /// <param name="id">Id of the habit to be excluded</param>
     /// <returns>200 Ok "Hábito excluido com sucesso!" </returns>
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         try
         {

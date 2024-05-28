@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using XTracker.Context;
 
@@ -11,9 +12,11 @@ using XTracker.Context;
 namespace XTracker.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240527033921_UpdateHabitIdToUUID")]
+    partial class UpdateHabitIdToUUID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,9 +159,11 @@ namespace XTracker.Migrations
 
             modelBuilder.Entity("XTracker.Models.Habits.Day", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int?>("Id"));
 
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime(6)");
@@ -173,12 +178,14 @@ namespace XTracker.Migrations
 
             modelBuilder.Entity("XTracker.Models.Habits.DayHabit", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("DayId")
-                        .HasColumnType("char(36)");
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int?>("Id"));
+
+                    b.Property<int?>("DayId")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("HabitId")
                         .HasColumnType("char(36)");
@@ -196,7 +203,8 @@ namespace XTracker.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("UUID()");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -221,14 +229,16 @@ namespace XTracker.Migrations
 
             modelBuilder.Entity("XTracker.Models.Habits.HabitWeekDay", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int?>("Id"));
 
                     b.Property<Guid>("HabitId")
                         .HasColumnType("char(36)");
 
-                    b.Property<int>("WeekDay")
+                    b.Property<int?>("WeekDay")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -367,8 +377,7 @@ namespace XTracker.Migrations
                     b.HasOne("XTracker.Models.Habits.Day", "Day")
                         .WithMany("DayHabits")
                         .HasForeignKey("DayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("XTracker.Models.Habits.Habit", "Habit")
                         .WithMany("DayHabits")

@@ -2,9 +2,9 @@
 {
     public class HabitWeekDay
     {
-        public int? Id { get; set; }
-        public int? HabitId { get; set; }
-        public int? WeekDay { get; set; }
+        public Guid Id { get; set; }
+        public Guid HabitId { get; set; }
+        public int WeekDay { get; set; }
         public Habit? Habit { get; set; }
     }
 }

@@ -31,6 +31,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<HabitWeekDay>()
             .HasKey(hw => hw.Id);
         modelBuilder.Entity<HabitWeekDay>()
+            .Property(hw => hw.Id)
+            .ValueGeneratedOnAdd();
+        modelBuilder.Entity<HabitWeekDay>()
             .HasOne(hw => hw.Habit)
             .WithMany(h => h.WeekDays)
             .HasForeignKey(hw => hw.HabitId)
@@ -39,6 +42,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         // Configure DayHabit
         modelBuilder.Entity<DayHabit>()
             .HasKey(dh => dh.Id);
+        modelBuilder.Entity<DayHabit>()
+            .Property(dh => dh.Id)
+            .ValueGeneratedOnAdd();
         modelBuilder.Entity<DayHabit>()
             .HasOne(dh => dh.Day)
             .WithMany(d => d.DayHabits)
@@ -50,10 +56,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(dh => dh.HabitId)
             .OnDelete(DeleteBehavior.Cascade);
 
-
         // Configure Day
         modelBuilder.Entity<Day>()
             .HasKey(d => d.Id);
+        modelBuilder.Entity<Day>()
+            .Property(d => d.Id)
+            .ValueGeneratedOnAdd();
         modelBuilder.Entity<Day>()
             .HasIndex(d => d.Date)
             .IsUnique();
@@ -75,15 +83,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             .IsRequired();
 
         modelBuilder.Entity<Habit>()
-       .Property(h => h.UserId)
-       .IsRequired();
-
-        modelBuilder.Entity<Habit>()
             .HasOne<ApplicationUser>()
             .WithMany()
             .HasForeignKey(h => h.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
-
     }
 }
