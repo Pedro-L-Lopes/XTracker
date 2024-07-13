@@ -12,8 +12,8 @@ using XTracker.Context;
 namespace XTracker.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240528214445_idToUUID")]
-    partial class idToUUID
+    [Migration("20240713203520_backup")]
+    partial class backup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -159,9 +159,9 @@ namespace XTracker.Migrations
 
             modelBuilder.Entity("XTracker.Models.Habits.Day", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime(6)");
@@ -176,15 +176,17 @@ namespace XTracker.Migrations
 
             modelBuilder.Entity("XTracker.Models.Habits.DayHabit", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<Guid>("DayId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("DayId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<Guid>("HabitId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("HabitId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -197,9 +199,9 @@ namespace XTracker.Migrations
 
             modelBuilder.Entity("XTracker.Models.Habits.Habit", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -224,12 +226,13 @@ namespace XTracker.Migrations
 
             modelBuilder.Entity("XTracker.Models.Habits.HabitWeekDay", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<Guid>("HabitId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("HabitId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("WeekDay")
                         .HasColumnType("int");

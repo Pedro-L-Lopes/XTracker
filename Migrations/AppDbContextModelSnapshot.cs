@@ -165,9 +165,6 @@ namespace XTracker.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Date")
-                        .IsUnique();
-
                     b.ToTable("Days");
                 });
 
@@ -202,19 +199,13 @@ namespace XTracker.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Habits");
                 });
@@ -379,15 +370,6 @@ namespace XTracker.Migrations
                     b.Navigation("Day");
 
                     b.Navigation("Habit");
-                });
-
-            modelBuilder.Entity("XTracker.Models.Habits.Habit", b =>
-                {
-                    b.HasOne("XTracker.Models.Users.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("XTracker.Models.Habits.HabitWeekDay", b =>
