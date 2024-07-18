@@ -108,15 +108,23 @@ namespace XTracker.Controllers
             // Check if the password meets complexity criteria
             if (!Regex.IsMatch(registerDTO.Password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$"))
             {
-                return BadRequest(new ResponseDTO { Status = "Error", Message = "A senha não atende aos criterios!" });
+                return BadRequest(new ResponseDTO { Status = "Error", Message = "A senha não atende aos critérios!" });
             }
 
+            // Check if the username is already taken
             var userExists = await _userManager.FindByNameAsync(registerDTO.Username!);
-
             if (userExists != null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                        new ResponseDTO { Status = "Error", Message = "Esse nome de usuário já está sendo utilizado, por favor utilize outro" });
+            }
+
+            // Check if the email is already taken
+            var emailExists = await _userManager.FindByEmailAsync(registerDTO.Email!);
+            if (emailExists != null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                       new ResponseDTO { Status = "Error", Message = "Esse email já está sendo utilizado, por favor utilize outro" });
             }
 
             ApplicationUser user = new()
@@ -144,9 +152,9 @@ namespace XTracker.Controllers
             // Generate tokens
             var authClaims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName!),
-                new Claim(ClaimTypes.Email, user.Email!),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+               new Claim(ClaimTypes.Name, user.UserName!),
+               new Claim(ClaimTypes.Email, user.Email!),
+               new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
             var token = _tokenService.GenerateAccessToken(authClaims, _configuration);
@@ -170,6 +178,7 @@ namespace XTracker.Controllers
                 CreatedAt = user.CreatedAt,
             });
         }
+
 
         /// <summary>
         /// Log in a user.
