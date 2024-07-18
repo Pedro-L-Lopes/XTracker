@@ -7,7 +7,6 @@ using XTracker.Services;
 using HabitTracker.test.Repository;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using XTracker.Midleware;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -147,6 +146,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors(opt => opt.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ValidationMiddleware>();
 
 app.UseHttpsRedirection();
 

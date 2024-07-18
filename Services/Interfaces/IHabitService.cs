@@ -9,7 +9,7 @@ public interface IHabitService
     Task<List<SummaryDTO>> GetSummary(string userId, int year);
     Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(Guid habitId, string startDate, string endDate);
     Task ToggleHabitForDay(Guid habitId, DateTime date);
-    Task HabitEdit(Guid habitId, EditHabitDTO EdithabitDTO);
+    Task HabitEdit(Guid habitId, UpdateHabitDTO EdithabitDTO);
 
     Task Delete(Guid habitId);
 }

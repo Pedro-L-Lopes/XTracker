@@ -23,5 +23,10 @@ namespace XTracker.Services
             var user = await _userRepository.UserDetails(userId);
             return _mapper.Map<UserDTO>(user);
         }
+
+        public async Task<bool> UpdateUser(UpdateUserDTO updateUserDTO)
+        {
+            return await _userRepository.UpdateUser(updateUserDTO);
+        }
     }
 }

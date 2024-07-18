@@ -199,7 +199,7 @@ public class HabitController : ControllerBase
     /// <param name="editHabitDTO">Data of habit</param>
     /// <returns>200 ok "Hábito editado com sucesso"</returns>
     [HttpPut("{id}/edit")]
-    public async Task<IActionResult> EditHabit(Guid id, [FromBody] EditHabitDTO editHabitDTO)
+    public async Task<IActionResult> EditHabit(Guid id, [FromBody] UpdateHabitDTO editHabitDTO)
     {
         try
         {

@@ -22,7 +22,7 @@ public class HabitService : IHabitService
         var habitEntity = new Habit
         {
             Title = habitDTO.Title,
-            CreatedAt = DateTime.Now.Date,
+            CreatedAt = new DateTime(2024, 5, 25),
             WeekDays = habitDTO.WeekDays.Select(day => new HabitWeekDay { WeekDay = day }).ToList(),
             UserId = habitDTO.UserId,
         };
@@ -82,7 +82,7 @@ public class HabitService : IHabitService
         await _uof.HabitRepository.ToggleHabitForDay(habitId, date);
     }
 
-    public async Task HabitEdit(Guid habitId, EditHabitDTO EdithabitDTO)
+    public async Task HabitEdit(Guid habitId, UpdateHabitDTO EdithabitDTO)
     {
         var habitEntity = new Habit
         {
