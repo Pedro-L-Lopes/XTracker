@@ -5,28 +5,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace XTracker.Migrations
 {
-    /// <inheritdoc />
     public partial class HabitsIdsStringToGuid : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "RowGuid",
-                table: "Habits");
-
-            migrationBuilder.DropColumn(
-                name: "RowGuid",
-                table: "HabitWeekDays");
-
-            migrationBuilder.DropColumn(
-                name: "RowGuid",
-                table: "Days");
-
-            migrationBuilder.DropColumn(
-                name: "RowGuid",
+            // Remover chaves estrangeiras
+            migrationBuilder.DropForeignKey(
+                name: "FK_DayHabits_Days_DayId",
                 table: "DayHabits");
 
+            migrationBuilder.DropForeignKey(
+                name: "FK_DayHabits_Habits_HabitId",
+                table: "DayHabits");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_HabitWeekDays_Habits_HabitId",
+                table: "HabitWeekDays");
+
+            // Alterar colunas
             migrationBuilder.AlterColumn<Guid>(
                 name: "Id",
                 table: "Habits",
@@ -96,11 +92,49 @@ namespace XTracker.Migrations
                 oldClrType: typeof(string),
                 oldType: "varchar(255)")
                 .OldAnnotation("MySql:CharSet", "utf8mb4");
+
+            // Recriar chaves estrangeiras
+            migrationBuilder.AddForeignKey(
+                name: "FK_DayHabits_Days_DayId",
+                table: "DayHabits",
+                column: "DayId",
+                principalTable: "Days",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_DayHabits_Habits_HabitId",
+                table: "DayHabits",
+                column: "HabitId",
+                principalTable: "Habits",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_HabitWeekDays_Habits_HabitId",
+                table: "HabitWeekDays",
+                column: "HabitId",
+                principalTable: "Habits",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            // Remover chaves estrangeiras
+            migrationBuilder.DropForeignKey(
+                name: "FK_DayHabits_Days_DayId",
+                table: "DayHabits");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_DayHabits_Habits_HabitId",
+                table: "DayHabits");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_HabitWeekDays_Habits_HabitId",
+                table: "HabitWeekDays");
+
+            // Reverter as alterações nas colunas
             migrationBuilder.AlterColumn<string>(
                 name: "Id",
                 table: "Habits",
@@ -110,14 +144,6 @@ namespace XTracker.Migrations
                 oldType: "char(36)")
                 .Annotation("MySql:CharSet", "utf8mb4")
                 .OldAnnotation("Relational:Collation", "ascii_general_ci");
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "RowGuid",
-                table: "Habits",
-                type: "char(36)",
-                nullable: false,
-                defaultValueSql: "NEWID()",
-                collation: "ascii_general_ci");
 
             migrationBuilder.AlterColumn<string>(
                 name: "HabitId",
@@ -139,14 +165,6 @@ namespace XTracker.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4")
                 .OldAnnotation("Relational:Collation", "ascii_general_ci");
 
-            migrationBuilder.AddColumn<Guid>(
-                name: "RowGuid",
-                table: "HabitWeekDays",
-                type: "char(36)",
-                nullable: false,
-                defaultValueSql: "NEWID()",
-                collation: "ascii_general_ci");
-
             migrationBuilder.AlterColumn<string>(
                 name: "Id",
                 table: "Days",
@@ -156,14 +174,6 @@ namespace XTracker.Migrations
                 oldType: "char(36)")
                 .Annotation("MySql:CharSet", "utf8mb4")
                 .OldAnnotation("Relational:Collation", "ascii_general_ci");
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "RowGuid",
-                table: "Days",
-                type: "char(36)",
-                nullable: false,
-                defaultValueSql: "NEWID()",
-                collation: "ascii_general_ci");
 
             migrationBuilder.AlterColumn<string>(
                 name: "HabitId",
@@ -195,13 +205,30 @@ namespace XTracker.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4")
                 .OldAnnotation("Relational:Collation", "ascii_general_ci");
 
-            migrationBuilder.AddColumn<Guid>(
-                name: "RowGuid",
+            // Recriar chaves estrangeiras
+            migrationBuilder.AddForeignKey(
+                name: "FK_DayHabits_Days_DayId",
                 table: "DayHabits",
-                type: "char(36)",
-                nullable: false,
-                defaultValueSql: "NEWID()",
-                collation: "ascii_general_ci");
+                column: "DayId",
+                principalTable: "Days",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_DayHabits_Habits_HabitId",
+                table: "DayHabits",
+                column: "HabitId",
+                principalTable: "Habits",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_HabitWeekDays_Habits_HabitId",
+                table: "HabitWeekDays",
+                column: "HabitId",
+                principalTable: "Habits",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
     }
 }

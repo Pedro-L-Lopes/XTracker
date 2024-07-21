@@ -120,8 +120,12 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Habit service and repository
 builder.Services.AddScoped<IHabitRepository, HabitRepository>();
 builder.Services.AddScoped<IHabitService, HabitService>();
+// User service and repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+// ToDo service and repository
+builder.Services.AddScoped<IToDoRepository, ToDoRepository>();
+builder.Services.AddScoped<IToDoService, ToDoService>();
 
 // Token Service and repository
 builder.Services.AddScoped<ITokenService, TokenService>();

@@ -22,7 +22,7 @@ public class HabitService : IHabitService
         var habitEntity = new Habit
         {
             Title = habitDTO.Title,
-            CreatedAt = new DateTime(2024, 5, 25),
+            CreatedAt = DateTime.Now.Date,
             WeekDays = habitDTO.WeekDays.Select(day => new HabitWeekDay { WeekDay = day }).ToList(),
             UserId = habitDTO.UserId,
         };

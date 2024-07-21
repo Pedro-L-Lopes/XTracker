@@ -6,6 +6,8 @@ namespace HabitTracker.test.Repository;
 public class UnityOfWork : IUnityOfWork
 {
     private IHabitRepository? _habitRepository;
+    private IToDoRepository? _todoRepository;
+
     public AppDbContext _context;
 
     public UnityOfWork(AppDbContext context)
@@ -18,6 +20,14 @@ public class UnityOfWork : IUnityOfWork
         get
         {
             return _habitRepository ??= new HabitRepository(_context, this);
+        }
+    }
+
+    public IToDoRepository ToDoRepository
+    {
+        get
+        {
+            return _todoRepository ??= new ToDoRepository(_context, this);
         }
     }
 

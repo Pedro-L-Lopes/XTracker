@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using XTracker.Models.Habits;
 using XTracker.Models.Users;
 using System;
+using XTracker.Models.ToDo;
 
 namespace XTracker.Context
 {
@@ -12,10 +13,15 @@ namespace XTracker.Context
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         // Mapping tables
+
+        // Habits
         public DbSet<Habit> Habits { get; set; }
         public DbSet<HabitWeekDay> HabitWeekDays { get; set; }
         public DbSet<Day> Days { get; set; }
         public DbSet<DayHabit> DayHabits { get; set; }
+
+        // ToDo
+        public DbSet<ToDoTask> Tasks { get; set; }
 
         // FluentApi
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -53,6 +59,13 @@ namespace XTracker.Context
                 .HasKey(h => h.Id);
             modelBuilder.Entity<Habit>()
                 .Property(h => h.Id)
+                .ValueGeneratedOnAdd();
+
+            // Configure ToDoTask
+            modelBuilder.Entity<ToDoTask>()
+                .HasKey(t => t.Id);
+            modelBuilder.Entity<ToDoTask>()
+                .Property(t => t.Id)
                 .ValueGeneratedOnAdd();
         }
     }
