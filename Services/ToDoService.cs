@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using System.Security.Cryptography.X509Certificates;
+using XTracker.DTOs.HabitDTOs;
 using XTracker.DTOs.ToDo;
 using XTracker.Models.ToDo;
 using XTracker.Repository.Interfaces;
@@ -29,5 +30,29 @@ public class ToDoService : IToDoService
         };
 
         await _uof.ToDoRepository.Create(taskEntity);
+    }
+
+    public async Task<List<ToDoTaskDTO>> GetAllTasks(Guid userId)
+    {
+        var tasks = await _uof.ToDoRepository.GetAllTasks(userId);
+
+        var taskDTOs = tasks.Select(task =>
+        {
+            var taskDTO = _mapper.Map<ToDoTaskDTO>(task);
+
+            return taskDTO;
+        }).ToList();
+
+        return taskDTOs;
+    }
+
+    public async Task CompletedTask(Guid taskId)
+    {
+        await _uof.ToDoRepository.CompletedTask(taskId);
+    }
+
+    public async Task ImportantTask(Guid taskId)
+    {
+        await _uof.ToDoRepository.ImportantTask(taskId);
     }
 }

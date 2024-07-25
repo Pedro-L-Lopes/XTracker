@@ -40,4 +40,54 @@ public class ToDoController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
+
+    [HttpGet("allTasks")]
+    public async Task<IActionResult> GetAllTasks([FromQuery] Guid userId)
+    {
+        try
+        {
+            var tasks = await _toDoService.GetAllTasks(userId);
+            return Ok(tasks);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Erro interno do servidor: {ex.Message}");
+        }
+    }
+    
+    [HttpPatch("isCompleted")]
+    public async Task<IActionResult> CompletedTask([FromQuery] Guid taskId)
+    {
+        try
+        {
+            await _toDoService.CompletedTask(taskId);
+            return Ok("Tarefa atualizada");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "Ocorreu um erro ao atualizar a tarefa");
+        }
+    }
+    
+    [HttpPatch("isImportant")]
+    public async Task<IActionResult> ImpotantTask([FromQuery] Guid taskId)
+    {
+        try
+        {
+            await _toDoService.ImportantTask(taskId);
+            return Ok("Tarefa atualizada");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "Ocorreu um erro ao atualizar a tarefa");
+        }
+    }
 }

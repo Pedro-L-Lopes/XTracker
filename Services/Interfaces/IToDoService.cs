@@ -4,4 +4,7 @@ namespace XTracker.Services.Interfaces;
 public interface IToDoService
 {
     Task Create(ToDoTaskDTO toDoTaskDTO);
+    Task<List<ToDoTaskDTO>> GetAllTasks(Guid userId);
+    Task CompletedTask(Guid taskId);
+    Task ImportantTask(Guid taskId);
 }
