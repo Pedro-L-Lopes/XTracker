@@ -1,19 +1,29 @@
-using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using XTracker.Context;
 using XTracker.Repository.Interfaces;
 using XTracker.Repository;
 using XTracker.Services.Interfaces;
 using XTracker.Services;
-using HabitTracker.test.Repository;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using XTracker.Models.Users;
+using HabitTracker.test.Repository;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure the culture globally
+CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
+CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -68,7 +78,6 @@ builder.Services.AddSwaggerGen(c =>
             },
              new string[]{}
         }
-
     });
 });
 
@@ -100,7 +109,6 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-
     options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
 });
 
@@ -110,9 +118,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
         .AddDefaultTokenProviders();
 
 // Bd
-var MySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+var sqlServerConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
-                    options.UseMySql(MySqlConnection, ServerVersion.AutoDetect(MySqlConnection)));
+                    options.UseSqlServer(sqlServerConnection));
 
 // DTOs
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -135,12 +143,10 @@ builder.Services.AddScoped<IUnityOfWork, UnityOfWork>();
 
 // JWT
 builder.Services.AddAuthorization();
-//builder.Services.AddAuthentication("Bearer").AddJwtBearer();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -154,6 +160,7 @@ app.UseMiddleware<ValidationMiddleware>();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -161,8 +161,8 @@ namespace XTracker.Controllers
             var refreshToken = _tokenService.GenerateRefreshToken();
 
             // Update user information
-            _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInMinutes"], out int RefreshTokenValidityInMinutes);
-            user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(RefreshTokenValidityInMinutes);
+            _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int RefreshTokenValidityInDays);
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(RefreshTokenValidityInDays);
             user.RefreshToken = refreshToken;
 
             await _userManager.UpdateAsync(user);
@@ -225,9 +225,9 @@ namespace XTracker.Controllers
             var token = _tokenService.GenerateAccessToken(authClaims, _configuration);
             var refreshToken = _tokenService.GenerateRefreshToken();
 
-            if (int.TryParse(_configuration["JWT:RefreshTokenValidityInMinutes"], out int refreshTokenValidityInMinutes))
+            if (int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays))
             {
-                user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(refreshTokenValidityInMinutes);
+                user.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
             }
 
             user.RefreshToken = refreshToken;

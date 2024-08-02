@@ -69,4 +69,33 @@ public class ToDoRepository : IToDoRepository
 
         await _uof.Commit();
     }
+
+    public async Task ChangeTaskDate(Guid taskId, DateTime date)
+    {
+        var existingTask = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == taskId);
+
+        if (existingTask == null)
+        {
+            throw new ArgumentException("Tarefa não encontrada");
+        }
+
+        existingTask.CreatedAt = date;
+
+        await _uof.Commit();
+    }
+
+    public async Task DeleteTask(Guid taskId)
+    {
+        var task = await _context.Tasks.FindAsync(taskId);
+
+        if (task != null)
+        {
+            _context.Tasks.Remove(task);
+            await _uof.Commit();
+        }
+        else
+        {
+            throw new ArgumentException("Tarefa não encontrada");
+        }
+    }
 }

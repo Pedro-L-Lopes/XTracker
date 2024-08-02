@@ -90,4 +90,37 @@ public class ToDoController : ControllerBase
             return StatusCode(500, "Ocorreu um erro ao atualizar a tarefa");
         }
     }
+
+    [HttpPatch("changeDate")]
+    public async Task<IActionResult> ChangeTaskDate([FromQuery] Guid taskId, DateTime date)
+    {
+        try
+        {
+            await _toDoService.ChangeTaskDate(taskId, date);
+
+            return Ok("Tarefa atualizada");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "Ocorreu um erro ao atualizar a tarefa");
+        }
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteTask([FromQuery] Guid taskId)
+    {
+        try
+        {
+            await _toDoService.DeleteTask(taskId);
+            return Ok("Tarefa excluída com sucesso!");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
 }

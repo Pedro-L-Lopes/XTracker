@@ -66,23 +66,27 @@ public class HabitRepository : IHabitRepository
 
     public async Task<List<SummaryDTO>> GetSummary(string userId, int year)
     {
-        var summary = await _context.Days
-            .Where(d => d.DayHabits.Any(dh => dh.Habit.UserId == userId) && d.Date.Value.Year == year)
-            .Select(d => new SummaryDTO
-            {
-                Id = d.Id,
-                Date = d.Date,
-                Completed = d.DayHabits.Count(dh => dh.Habit.UserId == userId),
-                Amount = _context.HabitWeekDays
-                    .Count(hwd => d.Date.HasValue &&
-                            hwd.WeekDay == (int)d.Date.Value.DayOfWeek &&
-                             hwd.Habit.UserId == userId &&
-                            hwd.Habit.CreatedAt.Date <= d.Date.Value.Date)
-            })
+        var days = await _context.Days
+            .Include(d => d.DayHabits)
+            .ThenInclude(dh => dh.Habit)
+            .Where(d => d.DayHabits.Any(dh => dh.Habit.UserId == userId) && d.Date.HasValue && d.Date.Value.Year == year)
             .ToListAsync();
+
+        var summary = days.Select(d => new SummaryDTO
+        {
+            Id = d.Id,
+            Date = d.Date,
+            Completed = d.DayHabits.Count(dh => dh.Habit.UserId == userId),
+            Amount = _context.HabitWeekDays
+                .Count(hwd => d.Date.HasValue &&
+                              hwd.WeekDay == (int)d.Date.Value.DayOfWeek &&
+                              hwd.Habit.UserId == userId &&
+                              hwd.Habit.CreatedAt.Date <= d.Date.Value.Date)
+        }).ToList();
 
         return summary;
     }
+
 
     public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(Guid habitId, DateTime startDate, DateTime endDate)
     {

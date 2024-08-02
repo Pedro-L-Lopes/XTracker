@@ -55,4 +55,14 @@ public class ToDoService : IToDoService
     {
         await _uof.ToDoRepository.ImportantTask(taskId);
     }
+
+    public async Task ChangeTaskDate(Guid taskId, DateTime date)
+    {
+        await _uof.ToDoRepository.ChangeTaskDate(taskId, date);
+    }
+
+    public async Task DeleteTask(Guid taskId)
+    {
+        await _uof.ToDoRepository.DeleteTask(taskId);
+    }
 }

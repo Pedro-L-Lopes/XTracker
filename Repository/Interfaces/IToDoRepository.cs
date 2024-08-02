@@ -8,4 +8,6 @@ public interface IToDoRepository
     Task<List<ToDoTaskDTO>> GetAllTasks(Guid userId);
     Task CompletedTask(Guid taskId);
     Task ImportantTask(Guid taskId);
+    Task ChangeTaskDate(Guid taskId, DateTime date);
+    Task DeleteTask(Guid taskId);
 }
