@@ -33,13 +33,13 @@ namespace XTracker.Repository
                  .Select(h => new HabitDTO
                  {
                      Id = h.Id,
-                     Title = h.Title,
+                     Title = h.Title!,
                      CreatedAt = h.CreatedAt,
                      UserId = h.UserId,
                      WeekDays = _context.HabitWeekDays
                             .Where(hwd => hwd.HabitId == h.Id)
                             .Select(hwd => hwd.WeekDay)
-                            .ToList(),
+                            .ToList() ?? new List<int>(),
                  }).ToListAsync();
 
             return habits;
@@ -56,7 +56,7 @@ namespace XTracker.Repository
         public async Task<List<Guid>> GetCompletedHabitsForDay(DateTime date, string userId)
         {
             return await _context.DayHabits
-                .Where(dh => dh.Day.Date == date.Date)
+                .Where(dh => dh.Day!.Date == date.Date)
                 .Join(_context.Habits,
                     dh => dh.HabitId,
                     h => h.Id,
@@ -91,7 +91,7 @@ namespace XTracker.Repository
             return summary;
         }
 
-        public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(Guid habitId, DateTime startDate, DateTime endDate)
+        public async Task<(HabitDTO? habit, int available, int completed)> GetHabitMetrics(Guid habitId, DateTime startDate, DateTime endDate)
         {
             var habitInfo = await _context.Habits
                 .Where(h => h.Id == habitId)
@@ -100,7 +100,7 @@ namespace XTracker.Repository
                     Habit = new HabitDTO
                     {
                         Id = h.Id,
-                        Title = h.Title!,
+                        Title = h.Title ?? string.Empty,
                         CreatedAt = h.CreatedAt,
                         WeekDays = _context.HabitWeekDays
                             .Where(hwd => hwd.HabitId == h.Id)
@@ -115,7 +115,7 @@ namespace XTracker.Repository
 
             if (habitInfo == null)
             {
-                return (null, 0, 0)!;
+                return (null, 0, 0);
             }
 
             DateTime habitStartDate = startDate > habitInfo.Habit.CreatedAt ? startDate : habitInfo.Habit.CreatedAt;
@@ -173,7 +173,7 @@ namespace XTracker.Repository
                 throw new ArgumentException("Hábito não encontrado");
             }
 
-            existingHabit.Title = habit.Title;
+            existingHabit.Title = habit.Title ?? existingHabit.Title;
 
             await _uof.Commit();
         }
