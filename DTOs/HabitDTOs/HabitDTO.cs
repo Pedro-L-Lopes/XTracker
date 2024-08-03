@@ -16,5 +16,5 @@ public class HabitDTO
     public List<DayHabit>? DayHabits { get; set; }
 
     [Required(ErrorMessage = "Informe os dias da semana que o hábito ficará disponível.")]
-    public List<int> WeekDays { get; set; }
+    public List<int> WeekDays { get; set; } = [];
 }

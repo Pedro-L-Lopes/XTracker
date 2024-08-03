@@ -27,8 +27,8 @@ public class ValidationMiddleware
             });
 
             var validationResults = new List<ValidationResult>();
-            var validationContext = new ValidationContext(updateUserDTO, null, null);
-            if (!Validator.TryValidateObject(updateUserDTO, validationContext, validationResults, true))
+            var validationContext = new ValidationContext(updateUserDTO!, null, null);
+            if (!Validator.TryValidateObject(updateUserDTO!, validationContext, validationResults, true))
             {
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
 
@@ -39,7 +39,7 @@ public class ValidationMiddleware
                 return;
             }
 
-            if (!string.IsNullOrEmpty(updateUserDTO.NewPassword) &&
+            if (!string.IsNullOrEmpty(updateUserDTO!.NewPassword) &&
                 updateUserDTO.NewPassword != updateUserDTO.ConfirmNewPassword)
             {
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;

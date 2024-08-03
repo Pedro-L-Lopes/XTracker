@@ -100,13 +100,13 @@ namespace XTracker.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
         {
             // Check if the username contains only letters and numbers
-            if (!Regex.IsMatch(registerDTO.Username, @"^[a-zA-Z0-9]+$"))
+            if (!Regex.IsMatch(registerDTO.Username!, @"^[a-zA-Z0-9]+$"))
             {
                 return BadRequest(new ResponseDTO { Status = "Error", Message = "Não utilize espaços ou caracteres especiais no nome de usuário" });
             }
 
             // Check if the password meets complexity criteria
-            if (!Regex.IsMatch(registerDTO.Password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$"))
+            if (!Regex.IsMatch(registerDTO.Password!, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$"))
             {
                 return BadRequest(new ResponseDTO { Status = "Error", Message = "A senha não atende aos critérios!" });
             }
@@ -211,8 +211,8 @@ namespace XTracker.Controllers
             var userRoles = await _userManager.GetRolesAsync(user);
             var authClaims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.UserName!),
+                new Claim(ClaimTypes.Email, user.Email!),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
@@ -268,7 +268,7 @@ namespace XTracker.Controllers
                 return BadRequest("Invalid access token/refresh token");
             }
 
-            string userName = principal.Identity.Name;
+            string userName = principal.Identity!.Name!;
 
             var user = await _userManager.FindByNameAsync(userName!);
 

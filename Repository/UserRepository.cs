@@ -47,12 +47,12 @@ namespace XTracker.Repository
             // Verificar a senha atual apenas se for fornecida uma nova senha
             if (!string.IsNullOrEmpty(updateUserDTO.NewPassword))
             {
-                if (!await _userManager.CheckPasswordAsync(user, updateUserDTO.CurrentPassword))
+                if (!await _userManager.CheckPasswordAsync(user, updateUserDTO.CurrentPassword!))
                 {
                     return false;
                 }
 
-                var passwordChangeResult = await _userManager.ChangePasswordAsync(user, updateUserDTO.CurrentPassword, updateUserDTO.NewPassword);
+                var passwordChangeResult = await _userManager.ChangePasswordAsync(user, updateUserDTO.CurrentPassword!, updateUserDTO.NewPassword);
                 if (!passwordChangeResult.Succeeded)
                 {
                     return false;
