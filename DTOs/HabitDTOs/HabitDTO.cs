@@ -6,10 +6,10 @@ namespace XTracker.DTOs.HabitDTOs;
 public class HabitDTO
 {
     public Guid Id { get; set; }
-    public string UserId { get; set; }
+    public string UserId { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Insira o titulo do hábito")]
-    public string? Title { get; set; }
+    [Required(ErrorMessage = "Insira o título do hábito")]
+    public string Title { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
 
     [JsonIgnore]

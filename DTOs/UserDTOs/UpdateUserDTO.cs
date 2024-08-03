@@ -5,7 +5,7 @@ namespace XTracker.DTOs.UserDTOs
 {
     public class UpdateUserDTO
     {
-        public string UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
 
         [RegularExpression("^[a-zA-Z0-9]+$", ErrorMessage = "Username só pode conter letras e números.")]
         public string? UserName { get; set; }

@@ -13,7 +13,7 @@ namespace XTracker.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20240801214150_inicial")]
-    partial class inicial
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
