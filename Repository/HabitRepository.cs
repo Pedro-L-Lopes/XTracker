@@ -115,7 +115,7 @@ namespace XTracker.Repository
 
             if (habitInfo == null)
             {
-                return (null, 0, 0);
+                return (null, 0, 0)!;
             }
 
             DateTime habitStartDate = startDate > habitInfo.Habit.CreatedAt ? startDate : habitInfo.Habit.CreatedAt;
