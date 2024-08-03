@@ -91,7 +91,7 @@ namespace XTracker.Repository
             return summary;
         }
 
-        public async Task<(HabitDTO? habit, int available, int completed)> GetHabitMetrics(Guid habitId, DateTime startDate, DateTime endDate)
+        public async Task<(HabitDTO habit, int available, int completed)> GetHabitMetrics(Guid habitId, DateTime startDate, DateTime endDate)
         {
             var habitInfo = await _context.Habits
                 .Where(h => h.Id == habitId)
