@@ -5,6 +5,7 @@ using XTracker.DTOs.UserDTOs;
 using XTracker.Repository.Interfaces;
 using System.Threading.Tasks;
 using XTracker.Models.Users;
+using System.Linq;
 
 namespace XTracker.Repository
 {
@@ -23,16 +24,18 @@ namespace XTracker.Repository
 
         public async Task<UserDTO> UserDetails(string userId)
         {
-            return await _context.Users
+            var user = await _context.Users
                 .Where(u => u.Id == userId)
                 .Select(u => new UserDTO
                 {
                     Id = u.Id,
-                    UserName = u.UserName,
-                    Email = u.Email,
+                    UserName = u.UserName!,
+                    Email = u.Email!,
                     CreatedAt = u.CreatedAt,
                 })
                 .FirstOrDefaultAsync();
+
+            return user!;
         }
 
         public async Task<bool> UpdateUser(UpdateUserDTO updateUserDTO)
@@ -74,6 +77,5 @@ namespace XTracker.Repository
             var updateResult = await _userManager.UpdateAsync(user);
             return updateResult.Succeeded;
         }
-
     }
 }
