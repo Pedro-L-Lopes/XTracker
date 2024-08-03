@@ -62,7 +62,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Header de autorização JWT usando o esquema Bearer.\r\n\r\nInforme 'Bearer'[espaço]..."
+        Description = "Header de autorizaÃ§Ã£o JWT usando o esquema Bearer.\r\n\r\nInforme 'Bearer'[espaÃ§o]..."
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement()
@@ -144,6 +144,17 @@ builder.Services.AddScoped<IUnityOfWork, UnityOfWork>();
 // JWT
 builder.Services.AddAuthorization();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:5173")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -153,7 +164,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "XTracker API V1"); });
 }
 
-app.UseCors(opt => opt.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.UseCors("AllowLocalhost");
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<ValidationMiddleware>();
