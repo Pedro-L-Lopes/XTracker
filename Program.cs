@@ -164,15 +164,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "XTracker API V1"); });
 }
 
-app.UseCors("AllowLocalhost");
-
-app.UseMiddleware<ExceptionMiddleware>();
-app.UseMiddleware<ValidationMiddleware>();
-
 app.UseHttpsRedirection();
+
+// Apply CORS policy
+app.UseCors("AllowLocalhost");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ValidationMiddleware>();
 
 app.MapControllers();
 
