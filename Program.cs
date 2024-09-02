@@ -21,6 +21,9 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Adicione o carregamento de variáveis de ambiente
+builder.Configuration.AddEnvironmentVariables();
+
 // Configure the culture globally
 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
 CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
@@ -82,8 +85,9 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // JWT
-var secretKey = builder.Configuration["JWT:SecretKey"]
-                    ?? throw new ArgumentException("Invalid secret key!");
+//var secretKey = builder.Configuration["JWT__SecretKey"]
+var secretKey = Environment.GetEnvironmentVariable("JWT__SecretKey")
+                ?? throw new ArgumentException("Invalid secret key!");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -106,6 +110,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
@@ -118,7 +123,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
         .AddDefaultTokenProviders();
 
 // Bd
-var sqlServerConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+//var sqlServerConnection = builder.Configuration["ConnectionStrings__DefaultConnection"];
+var sqlServerConnection = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+if (string.IsNullOrEmpty(sqlServerConnection))
+{
+    throw new ArgumentException("Invalid or missing connection string.");
+}
 builder.Services.AddDbContext<AppDbContext>(options =>
                     options.UseSqlServer(sqlServerConnection));
 
